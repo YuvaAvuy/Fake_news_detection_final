@@ -6,7 +6,13 @@ from bs4 import BeautifulSoup
 from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
 
 # ==============================
-# Load DL Models
+# Google Gemini API Setup
+# ==============================
+API_KEY = st.secrets.get("API_KEY") or os.environ.get("API_KEY")
+API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={API_KEY}"
+
+# ==============================
+# Loading  Models
 # ==============================
 @st.cache_resource
 def load_bert_model():
@@ -18,8 +24,22 @@ def load_bert_model():
 def load_roberta_model():
     return pipeline("zero-shot-classification", model="roberta-large-mnli")
 
-bert_pipeline = load_bert_model()
-roberta_pipeline = load_roberta_model()
+bert_pipeline = None
+roberta_pipeline = None
+
+def get_bert_model():
+    global bert_pipeline
+    if bert_pipeline is None:
+        with st.spinner("Loading BERT model..."):
+            bert_pipeline = load_bert_model()
+    return bert_pipeline
+
+def get_roberta_model():
+    global roberta_pipeline
+    if roberta_pipeline is None:
+        with st.spinner("Loading RoBERTa model..."):
+            roberta_pipeline = load_roberta_model()
+    return roberta_pipeline
 
 # ==============================
 # Text Cleaning
@@ -45,21 +65,22 @@ def scrape_url(url):
         title = soup.title.string if soup.title else ""
         article_div = soup.find("article") or soup.find("div", {"class": "articlebodycontent"}) or soup.find("div", {"id": "content-body"})
         if article_div:
-            chunks = [elem.get_text().strip() for elem in article_div.find_all(["p","li","div"]) if len(elem.get_text().split())>5]
+            chunks = [elem.get_text().strip() for elem in article_div.find_all(["p", "li", "div"]) if len(elem.get_text().split()) > 5]
         else:
-            chunks = [p.get_text().strip() for p in soup.find_all("p") if len(p.get_text().split())>5]
+            chunks = [p.get_text().strip() for p in soup.find_all("p") if len(p.get_text().split()) > 5]
         text = " ".join(chunks)
         if not text:
             text = soup.get_text()
         return clean_text((title + "\n\n" + text)[:4000])
-    except:
+    except Exception:
         return None
 
 # ==============================
 # Trusted Sources
 # ==============================
 trusted_sources = [
-    # Indian and International as before...
+    "bbc.com", "reuters.com", "apnews.com", "timesofindia.com",
+    "thehindu.com", "ndtv.com", "indiatoday.in", "cnn.com", "nytimes.com"
 ]
 
 def is_trusted(url):
@@ -75,62 +96,27 @@ def predict_text_ensemble(text, url=""):
     if url and is_trusted(url):
         return "REAL"
 
-    bert_res = bert_pipeline(text[:512])[0]['label']
+    bert_model = get_bert_model()
+    roberta_model = get_roberta_model()
+
+    bert_res = bert_model(text[:512])[0]['label']
     bert_pred = "REAL" if "REAL" in bert_res.upper() else "FAKE"
 
-    roberta_res = roberta_pipeline(text, candidate_labels=["REAL","FAKE"])
+    roberta_res = roberta_model(text, candidate_labels=["REAL", "FAKE"])
     roberta_pred = roberta_res['labels'][0]
 
-    scores = {"REAL":0, "FAKE":0}
-    for p, w in zip([bert_pred, roberta_pred],[0.5,0.5]):
-        if p=="REAL": scores["REAL"] += w
-        elif p=="FAKE": scores["FAKE"] += w
+    scores = {"REAL": 0, "FAKE": 0}
+    for p, w in zip([bert_pred, roberta_pred], [0.5, 0.5]):
+        if p == "REAL":
+            scores["REAL"] += w
+        elif p == "FAKE":
+            scores["FAKE"] += w
 
     return "REAL" if scores["REAL"] > scores["FAKE"] else "FAKE"
 
 # ==============================
-# Streamlit UI
+# Gemini API Query
 # ==============================
-st.title("📰 Fake News Detection App (DL Ensemble)")
-
-input_type = st.radio("Choose Input Type", ["Text", "URL"])
-
-user_input = ""
-page_url = ""
-
-if input_type == "Text":
-    user_input = st.text_area("Enter news text here", height=200)
-elif input_type == "URL":
-    page_url = st.text_input("Enter news article URL")
-    if page_url:
-        scraped = scrape_url(page_url)
-        if scraped:
-            st.text_area("Extracted Article", scraped, height=300)
-            user_input = scraped
-        else:
-            st.warning("⚠️ Could not scrape the URL.")
-
-if st.button("Analyze"):
-    if not user_input.strip():
-        st.warning("Please enter valid text or URL.")
-    else:
-        try:
-            final_result = predict_text_ensemble(user_input, page_url)
-            st.subheader("Final Verdict:")
-            if final_result=="REAL":
-                st.success("🟢 REAL NEWS")
-            elif final_result=="FAKE":
-                st.error("🔴 FAKE NEWS")
-
-        except Exception:
-            st.error("⚠️ Error during analysis. Please try again.")
-
-# ==============================
-# Hidden Remote API Query
-# ==============================
-API_KEY = st.secrets.get("API_KEY") or os.environ.get("API_KEY")
-API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={API_KEY}"
-
 def query_api(text):
     headers = {"Content-Type": "application/json"}
     data = {
@@ -154,5 +140,49 @@ def query_api(text):
             return "FAKE", explanation
         else:
             return "UNSURE", explanation
-    except:
+    except Exception:
         return "UNSURE", "Explanation not available."
+
+# ==============================
+# Streamlit UI
+# ==============================
+st.title("📰 Fake News Detection App (DL + Gemini)")
+
+input_type = st.radio("Choose Input Type", ["Text", "URL"])
+
+user_input = ""
+page_url = ""
+
+if input_type == "Text":
+    user_input = st.text_area("Enter news text here", height=200)
+elif input_type == "URL":
+    page_url = st.text_input("Enter news article URL")
+    if page_url:
+        scraped = scrape_url(page_url)
+        if scraped:
+            st.text_area("Extracted Article", scraped, height=300)
+            user_input = scraped
+        else:
+            st.warning("⚠️ Could not scrape the URL.")
+
+if st.button("Analyze"):
+    if not user_input.strip():
+        st.warning("Please enter valid text or URL.")
+    else:
+        try:
+            with st.spinner("Analyzing using deep learning models..."):
+                final_result = predict_text_ensemble(user_input, page_url)
+            with st.spinner("Getting Gemini AI verification..."):
+                gemini_label, gemini_explanation = query_api(user_input)
+
+            st.subheader("Final Verdicts")
+            if final_result == "REAL":
+                st.success(f"🟢 DL Ensemble: REAL NEWS")
+            else:
+                st.error(f"🔴 DL Ensemble: FAKE NEWS")
+
+            st.info(f" Verdict: {gemini_label}")
+            st.write(f"💬 {gemini_explanation}")
+
+        except Exception as e:
+            st.error(f"⚠️ Error during analysis: {e}")
