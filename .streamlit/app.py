@@ -30,14 +30,14 @@ roberta_pipeline = None
 def get_bert_model():
     global bert_pipeline
     if bert_pipeline is None:
-        with st.spinner("Loading BERT model..."):
+        with st.spinner():
             bert_pipeline = load_bert_model()
     return bert_pipeline
 
 def get_roberta_model():
     global roberta_pipeline
     if roberta_pipeline is None:
-        with st.spinner("Loading RoBERTa model..."):
+        with st.spinner():
             roberta_pipeline = load_roberta_model()
     return roberta_pipeline
 
