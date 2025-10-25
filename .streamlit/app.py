@@ -204,6 +204,7 @@ if st.button("Analyze"):
             st.info(f" Verdict: {gemini_label}")
               with st.expander("🔎 Debug: Show Extracted Text"):
             st.write(f" {gemini_explanation}")
+            st.markdown("### ✅ Correct Information:")
 
         except Exception as e:
             st.error(f"⚠️ Error during analysis: {e}")
