@@ -79,7 +79,28 @@ def scrape_url(url):
 # Trusted Sources
 # ==============================
 trusted_sources = [
-    "thehindu.com","timesofindia.com","hindustantimes.com","ndtv.com","indiatoday.in", "indianexpress.com","livemint.com","business-standard.com","deccanherald.com", "telegraphindia.com","mid-day.com","dnaindia.com","scroll.in","firstpost.com", "theprint.in","news18.com","oneindia.com","outlookindia.com","zeenews.india.com", "cnnnews18.com","economictimes.indiatimes.com","financialexpress.com","siasat.com", "newindianexpress.com","tribuneindia.com","asianage.com","bharattimes.com", "freepressjournal.in","morningindia.in","abplive.com","newsable.asianetnews.com","bbc.com","cnn.com","reuters.com","apnews.com","aljazeera.com","theguardian.com", "nytimes.com","washingtonpost.com","bloomberg.com","dw.com","foxnews.com","cbsnews.com", "nbcnews.com","abcnews.go.com","sky.com","france24.com","rt.com","sputniknews.com", "npr.org","telegraph.co.uk","thetimes.co.uk","independent.co.uk","globaltimes.cn", "china.org.cn","cbc.ca","abc.net.au","smh.com.au","japantimes.co.jp","lemonde.fr", "elpais.com","derstandard.at","spiegel.de","tagesschau.de","asiatimes.com", "straitstimes.com","thaiworldview.com","thejakartapost.com","thestandard.com.hk", "sbs.com.au","hawaiinewsnow.com","theglobeandmail.com","irishnews.com","latimes.com", "chicagotribune.com","startribune.com","nydailynews.com","financialtimes.com", "forbes.com","thehill.com","vox.com","buzzfeednews.com","huffpost.com","usatoday.com", "teleSURenglish.net","euronews.com","al-monitor.com","news.com.au","cnbc.com", "barrons.com","time.com","foreignpolicy.com","economist.com","foreignaffairs.com", "dailytelegraph.com.au","smh.com.au","thesun.co.uk","dailymail.co.uk",".gov.in","pib.gov.in","isro.gov.in","pmindia.gov.in","mod.gov.in","mha.gov.in", "rbi.org.in","sebi.gov.in","nic.in","mohfw.gov.in","moef.gov.in","meity.gov.in", "railway.gov.in","dgca.gov.in","drdo.gov.in","indianrailways.gov.in","education.gov.in", "scienceandtech.gov.in","urbanindia.nic.in","financialservices.gov.in", "commerce.gov.in","sportsauthorityofindia.nic.in","agriculture.gov.in","power.gov.in", "parliamentofindia.nic.in","taxindia.gov.in","cbic.gov.in","epfindia.gov.in","defence.gov.in",".gov",".europa.eu","un.org","who.int","nasa.gov","esa.int","imf.org","worldbank.org", "fao.org","wto.org","unicef.org","unhcr.org","redcross.org","cdc.gov","nih.gov","usa.gov", "canada.ca","gov.uk","australia.gov.au","japan.go.jp","ec.europa.eu","consilium.europa.eu", "ecb.europa.eu","unep.org","ilo.org","ohchr.org","unodc.org","unwomen.org", "unfpa.org","unesco.org","wmo.int","ifrc.org","nato.int","oecd.org","europarl.europa.eu", "unido.org","wfp.org"
+    "thehindu.com","timesofindia.com","hindustantimes.com","ndtv.com","indiatoday.in",
+    "indianexpress.com","livemint.com","business-standard.com","deccanherald.com",
+    "telegraphindia.com","mid-day.com","dnaindia.com","scroll.in","firstpost.com", 
+    "theprint.in","news18.com","oneindia.com","outlookindia.com","zeenews.india.com",
+    "cnnnews18.com","economictimes.indiatimes.com","financialexpress.com","siasat.com", 
+    "newindianexpress.com","tribuneindia.com","asianage.com","bharattimes.com", "freepressjournal.in",
+    "morningindia.in","abplive.com","newsable.asianetnews.com","bbc.com","cnn.com","reuters.com","apnews.com",
+    "aljazeera.com","theguardian.com", "nytimes.com","washingtonpost.com","bloomberg.com","dw.com","foxnews.com",
+    "cbsnews.com", "nbcnews.com","abcnews.go.com","sky.com","france24.com","rt.com","sputniknews.com", "npr.org",
+    "telegraph.co.uk","thetimes.co.uk","independent.co.uk","globaltimes.cn", "china.org.cn","cbc.ca","abc.net.au",
+    "smh.com.au","japantimes.co.jp","lemonde.fr", "elpais.com","derstandard.at","spiegel.de","tagesschau.de","asiatimes.com", 
+    "straitstimes.com","thaiworldview.com","thejakartapost.com","thestandard.com.hk", "sbs.com.au","hawaiinewsnow.com","theglobeandmail.com",
+    "irishnews.com","latimes.com", "chicagotribune.com","startribune.com","nydailynews.com","financialtimes.com", "forbes.com","thehill.com",
+    "vox.com","buzzfeednews.com","huffpost.com","usatoday.com", "teleSURenglish.net","euronews.com","al-monitor.com","news.com.au","cnbc.com", 
+    "barrons.com","time.com","foreignpolicy.com","economist.com","foreignaffairs.com", "dailytelegraph.com.au","smh.com.au","thesun.co.uk",
+    "dailymail.co.uk",".gov.in","pib.gov.in","isro.gov.in","pmindia.gov.in","mod.gov.in","mha.gov.in", "rbi.org.in","sebi.gov.in","nic.in",
+    "mohfw.gov.in","moef.gov.in","meity.gov.in", "railway.gov.in","dgca.gov.in","drdo.gov.in","indianrailways.gov.in","education.gov.in",
+    "scienceandtech.gov.in","urbanindia.nic.in","financialservices.gov.in", "commerce.gov.in","sportsauthorityofindia.nic.in","agriculture.gov.in",
+    "power.gov.in", "parliamentofindia.nic.in","taxindia.gov.in","cbic.gov.in","epfindia.gov.in","defence.gov.in",".gov",".europa.eu","un.org",
+    "who.int","nasa.gov","esa.int","imf.org","worldbank.org", "fao.org","wto.org","unicef.org","unhcr.org","redcross.org","cdc.gov","nih.gov",
+    "usa.gov", "canada.ca","gov.uk","australia.gov.au","japan.go.jp","ec.europa.eu","consilium.europa.eu", "ecb.europa.eu","unep.org","ilo.org",
+    "ohchr.org","unodc.org","unwomen.org", "unfpa.org","unesco.org","wmo.int","ifrc.org","nato.int","oecd.org","europarl.europa.eu", "unido.org","wfp.org"
 ]
 
 def is_trusted(url):
@@ -145,7 +166,7 @@ def query_api(text):
 # ==============================
 # Streamlit UI
 # ==============================
-st.title("📰 Fake News Detection App (DL + Gemini)")
+st.title("Fake News Detection App")
 
 input_type = st.radio("Choose Input Type", ["Text", "URL"])
 
@@ -162,26 +183,27 @@ elif input_type == "URL":
             st.text_area("Extracted Article", scraped, height=300)
             user_input = scraped
         else:
-            st.warning("⚠️ Could not scrape the URL.")
+            st.warning(" Could not scrape the URL.")
 
 if st.button("Analyze"):
     if not user_input.strip():
         st.warning("Please enter valid text or URL.")
     else:
         try:
-            with st.spinner("Analyzing using deep learning models..."):
+            with st.spinner(""):
                 final_result = predict_text_ensemble(user_input, page_url)
-            with st.spinner("Getting Gemini AI verification..."):
+            with st.spinner(""):
                 gemini_label, gemini_explanation = query_api(user_input)
 
-            st.subheader("Final Verdicts")
-            if final_result == "REAL":
-                st.success(f"🟢 DL Ensemble: REAL NEWS")
-            else:
-                st.error(f"🔴 DL Ensemble: FAKE NEWS")
 
+            if final_result == "REAL":
+                st.success(f"🟢REAL NEWS")
+            else:
+                st.error(f"🔴FAKE NEWS")
+            st.markdown("### 📝 Why this decision?")
             st.info(f" Verdict: {gemini_label}")
-            st.write(f"💬 {gemini_explanation}")
+              with st.expander("🔎 Debug: Show Extracted Text"):
+            st.write(f" {gemini_explanation}")
 
         except Exception as e:
             st.error(f"⚠️ Error during analysis: {e}")
