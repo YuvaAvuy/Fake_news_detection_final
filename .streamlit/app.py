@@ -166,6 +166,14 @@ def query_api(text):
 # ==============================
 # Streamlit UI
 # ==============================
+st.markdown("""
+    <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
+        <img src="https://cdn-icons-png.flaticon.com/128/18788/18788954.png" width="50">
+        <div class="title" style="font-size:40px; font-weight:bold;">Fake News Detection</div>
+    </div>
+""", unsafe_allow_html=True)
+
+st.markdown('<div class="subtitle"></div>', unsafe_allow_html=True)
 st.title("Fake News Detection App")
 
 input_type = st.radio("Choose Input Type", ["Text", "URL"])
