@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
 
 # ==============================
-# Google Gemini API Setup
+#  API Setup
 # ==============================
 API_KEY = st.secrets.get("API_KEY") or os.environ.get("API_KEY")
 API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={API_KEY}"
